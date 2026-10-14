@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5C1A42">
+<meta name="robots" content="noindex, nofollow">
+<title>Nasze pół roku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+  /* Malinowe nocne niebo, jedna kolumna pod telefon. Księżyc rośnie z każdym ekranem: pół roku = pół księżyca. */
+  :root {
+    --night: #5C1A42;
+    --dusk: #7A2858;
+    --moon: #F5E6B8;
+    --rose: #FF8DA1;
+    --blush: #F9D5E5;
+    --paper: #F8F5EF;
+    --ink: #5A1340;
+    --env-back: #6E2150;
+    --env-pocket: #8E3168;
+    --env-pocket-2: #7E2A5C;
+    --env-flap: #A6417C;
+    --env-flap-2: #943670;
+    --display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background-color: var(--night);
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 12%, var(--moon) 99%, transparent),
+      radial-gradient(1px 1px at 22% 38%, var(--blush) 99%, transparent),
+      radial-gradient(1.5px 1.5px at 78% 9%, var(--moon) 99%, transparent),
+      radial-gradient(1px 1px at 91% 31%, var(--blush) 99%, transparent),
+      radial-gradient(1px 1px at 64% 22%, var(--moon) 99%, transparent),
+      radial-gradient(1.5px 1.5px at 40% 5%, var(--blush) 99%, transparent),
+      radial-gradient(1px 1px at 12% 70%, var(--blush) 99%, transparent),
+      radial-gradient(1px 1px at 86% 64%, var(--moon) 99%, transparent),
+      radial-gradient(1.5px 1.5px at 55% 88%, var(--blush) 99%, transparent),
+      radial-gradient(1px 1px at 30% 95%, var(--moon) 99%, transparent);
+    background-size: 100% 900px;
+    color: var(--blush);
+    font-family: var(--body);
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  [hidden] { display: none !important; }
+
+  main {
+    max-width: 440px;
+    margin: 0 auto;
+    padding-top: max(40px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(88px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(24px, env(safe-area-inset-left, 0px));
+    padding-right: max(24px, env(safe-area-inset-right, 0px));
+  }
+
+  .screen { display: flex; flex-direction: column; gap: 24px; animation: fade .45s ease-out; }
+  .center { align-items: center; text-align: center; }
+
+  .eyebrow { display: flex; align-items: center; gap: 12px; }
+  .eyebrow span {
+    font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--blush);
+  }
+  .moon {
+    width: 28px; height: 28px; flex: none; border-radius: 50%;
+    border: 1.5px solid var(--moon); background: var(--dusk);
+    box-shadow: inset calc(var(--lit, 0px) * -1) 0 0 0 var(--moon);
+  }
+  .moon.half, .moon-big { background: linear-gradient(90deg, var(--dusk) 50%, var(--moon) 50%); box-shadow: none; }
+  .moon-big {
+    width: 112px; height: 112px; border-radius: 50%; border: 2px solid var(--moon);
+    box-shadow: 0 0 60px 6px rgba(245, 230, 184, .22);
+  }
+
+  h1, h2 { margin: 0; font-family: var(--display); font-weight: 400; color: var(--moon); text-wrap: balance; }
+  h1 { font-size: 60px; line-height: 1; letter-spacing: -.01em; }
+  h2 { font-size: 40px; line-height: 1.05; }
+  h2.question { font-size: 36px; line-height: 1.08; }
+  h1:focus, h2:focus { outline: none; }
+  p { margin: 0; }
+  .ask { font-size: 18px; font-weight: 600; }
+  .big-ask { font-family: var(--display); font-size: 34px; line-height: 1.1; color: var(--moon); }
+  .hand { font-family: var(--hand); font-size: 26px; line-height: 1.2; color: var(--rose); animation: rise .35s ease-out; }
+
+  /* Koperta: klapka odchyla się w 3D, pieczęć znika, list wysuwa się do góry. */
+  .env {
+    position: relative; display: block; width: 100%; max-width: 260px; aspect-ratio: 11 / 7;
+    margin: 72px auto 0; padding: 0; border: 0; background: none; font: inherit; color: inherit;
+    cursor: pointer; perspective: 900px; -webkit-appearance: none; appearance: none;
+    animation: bob 3.2s ease-in-out infinite;
+  }
+  .env:focus-visible { outline: 3px solid var(--moon); outline-offset: 8px; border-radius: 12px; }
+  .env.open { animation: none; cursor: default; }
+  .env-back { position: absolute; inset: 0; border-radius: 10px; background: var(--env-back); box-shadow: 0 18px 34px rgba(0, 0, 0, .35); }
+  .env-letter {
+    position: absolute; left: 7%; right: 7%; top: 6%; height: 88%; padding: 10% 12% 0;
+    border-radius: 6px; background: var(--paper); display: flex; flex-direction: column; align-items: center; gap: 8px;
+    z-index: 2; transition: transform .9s cubic-bezier(.2, .9, .25, 1) .45s;
+  }
+  .env-letter-text { font-family: var(--hand); font-size: 30px; font-weight: 600; line-height: 1; color: var(--ink); }
+  .env-line { display: block; width: 70%; height: 2px; border-radius: 2px; background: #EBD3DF; }
+  .env-line.short { width: 50%; }
+  .env-pocket {
+    position: absolute; inset: 0; border-radius: 10px; z-index: 3;
+    background: linear-gradient(160deg, var(--env-pocket) 0%, var(--env-pocket-2) 100%);
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+    will-change: transform; /* bez własnej warstwy Chrome gubi wycięcie w trakcie animacji */
+  }
+  .env-flap {
+    position: absolute; left: 0; right: 0; top: 0; height: 58%; border-radius: 10px 10px 0 0; z-index: 4;
+    background: linear-gradient(180deg, var(--env-flap) 0%, var(--env-flap-2) 100%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0;
+    transition: transform .55s ease-in-out, z-index 0s linear .28s;
+  }
+  .env-seal {
+    position: absolute; left: 50%; top: 58%; width: 38px; height: 38px; margin: -19px 0 0 -19px;
+    border-radius: 50%; background: var(--rose); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); z-index: 5;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .env-seal::after {
+    content: ""; position: absolute; inset: 9px; border-radius: 50%; border: 2px solid var(--night);
+    background: linear-gradient(90deg, transparent 50%, var(--night) 50%);
+  }
+  .env-heart { position: absolute; top: 10%; width: 22px; height: 22px; opacity: 0; z-index: 6; pointer-events: none; }
+  .env.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .env.open .env-seal { opacity: 0; transform: scale(.4); }
+  .env.open .env-letter { transform: translateY(-58%); }
+  .env.open .env-heart { animation: pop 1.8s ease-out 1s forwards; }
+  .after-open { animation: reveal .5s ease-out 1.3s both; }
+
+  .buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-block: 4px; }
+  .btn {
+    min-height: 56px; width: 100%; display: flex; align-items: center; justify-content: center;
+    border-radius: 999px; font: 600 18px/1.2 var(--body); text-decoration: none; cursor: pointer;
+    position: relative; touch-action: manipulation;
+    transition: transform .3s cubic-bezier(.3, 1.4, .5, 1), background-color .2s ease;
+  }
+  .btn:focus-visible { outline: 3px solid var(--moon); outline-offset: 3px; }
+  .btn-yes { background: var(--rose); color: var(--night); border: none; font-weight: 700; z-index: 2; }
+  .btn-no { background: var(--night); color: var(--moon); border: 1.5px solid var(--moon); z-index: 1; }
+  .btn-next { background: transparent; color: var(--moon); border: 1.5px solid var(--moon); }
+  .btn-yes:active, .btn-next:active { filter: brightness(.95); }
+
+  .polaroid {
+    margin: 0; align-self: center; width: 100%; max-width: 340px;
+    padding: 14px 14px 18px; background: var(--paper); border-radius: 3px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+    display: flex; flex-direction: column; gap: 14px;
+    transform: rotate(var(--tilt, -2deg));
+  }
+  .polaroid img, .photo-empty { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+  .photo-empty {
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: #F6DCE8; border: 1.5px dashed #C27A9E; color: #7A2858;
+    font-size: 15px; font-weight: 600; text-align: center;
+  }
+  .polaroid figcaption { font-family: var(--hand); font-size: 26px; line-height: 1.1; color: var(--ink); text-align: center; }
+
+  .reply {
+    padding: 18px 20px; border-radius: 16px; background: var(--dusk);
+    font-family: var(--hand); font-size: 26px; line-height: 1.25; color: var(--moon);
+    animation: rise .35s ease-out;
+  }
+
+  .letter {
+    display: flex; flex-direction: column; gap: 14px; padding: 28px 24px 32px;
+    background: var(--paper); border-radius: 4px; box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+    color: var(--ink); font-family: var(--hand); font-size: 25px; line-height: 1.35;
+  }
+  .letter .greeting { font-size: 30px; font-weight: 600; }
+  .letter .sign { padding-top: 6px; text-align: right; font-weight: 600; }
+
+  .details {
+    margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 20px; align-items: baseline;
+    padding: 20px 22px; border-radius: 16px; background: var(--dusk); border: 1px solid rgba(245, 230, 184, .22);
+  }
+  .details dt { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .details dd { margin: 0; font-weight: 600; color: var(--moon); white-space: pre-line; }
+
+  .fullmoon-wrap { position: relative; width: 168px; height: 168px; }
+  .fullmoon {
+    width: 168px; height: 168px; border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 38%, rgba(92, 26, 66, .08) 0 12%, transparent 13%),
+      radial-gradient(circle at 64% 64%, rgba(92, 26, 66, .07) 0 9%, transparent 10%),
+      radial-gradient(circle at 60% 28%, rgba(92, 26, 66, .06) 0 6%, transparent 7%),
+      var(--moon);
+    animation: glow 4s ease-in-out infinite;
+  }
+  .heart { position: absolute; animation: drift 5s ease-in-out infinite; }
+  .date-card {
+    width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 20px 22px; border-radius: 16px;
+    background: var(--dusk); border: 1px solid rgba(245, 230, 184, .22);
+  }
+  .date-card .label { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .date-card .when { font-size: 20px; font-weight: 700; color: var(--moon); }
+  .link-quiet {
+    min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px;
+    background: none; border: none; color: var(--moon); font: 600 15px var(--body);
+    text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+  }
+  .link-quiet:focus-visible { outline: 3px solid var(--moon); outline-offset: 3px; }
+
+  @keyframes fade { from { opacity: .3; } to { opacity: 1; } }
+  @keyframes rise { from { opacity: .2; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 50px 8px rgba(245, 230, 184, .22); }
+    50% { box-shadow: 0 0 80px 20px rgba(245, 230, 184, .4); }
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) rotate(-8deg); }
+    50% { transform: translateY(-10px) rotate(6deg); }
+  }
+  @keyframes reveal {
+    from { opacity: 0; visibility: hidden; transform: translateY(10px); }
+    to { opacity: 1; visibility: visible; transform: none; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: translateY(0) scale(.5); }
+    25% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-height: 700px) {
+    .env { max-width: 220px; margin-top: 60px; }
+  }
+  @media (max-width: 360px) {
+    h1 { font-size: 50px; }
+    h2 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- 1. Koperta -->
+  <section class="screen" id="koperta">
+    <div class="eyebrow"><div class="moon" aria-hidden="true"></div><span>Dla mojej drugiej połówki</span></div>
+    <h1 tabindex="-1">Hej, <em data-fill="imie"></em></h1>
+    <p>Mam dla Ciebie coś małego. Kilka naszych wspomnień, parę słów ode mnie i jedno ważne pytanie na samym końcu.</p>
+    <button type="button" class="env" id="koperta-env" aria-label="Otwórz kopertę">
+      <span class="env-back"></span>
+      <span class="env-letter"><span class="env-letter-text">Dla Ciebie</span><span class="env-line"></span><span class="env-line short"></span></span>
+      <span class="env-pocket"></span>
+      <span class="env-flap"></span>
+      <span class="env-seal"></span>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 14%;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#FF8DA1"></path></svg>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 46%; animation-delay: 1.25s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#F5E6B8"></path></svg>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 78%; animation-delay: 1.5s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="#FF8DA1" stroke-width="2"></path></svg>
+    </button>
+    <div id="koperta-pytanie" style="display: flex; flex-direction: column; gap: 24px;">
+      <p class="big-ask">Otworzysz?</p>
+      <div class="buttons">
+        <button type="button" class="btn btn-yes" id="koperta-tak">Tak</button>
+        <button type="button" class="btn btn-no" id="koperta-nie">Nie</button>
+      </div>
+      <p class="hand" id="koperta-odp" aria-live="polite" hidden></p>
+    </div>
+    <button type="button" class="btn btn-yes after-open" id="koperta-dalej" hidden>Zajrzyj do środka →</button>
+  </section>
+
+  <!-- 2–5. Wspomnienia (jeden ekran, treść z DANE.wspomnienia) -->
+  <section class="screen" id="wspomnienie" hidden>
+    <div class="eyebrow"><div class="moon" id="w-moon" aria-hidden="true"></div><span id="w-licznik"></span></div>
+    <figure class="polaroid" id="w-polaroid">
+      <div id="w-foto"></div>
+      <figcaption id="w-podpis"></figcaption>
+    </figure>
+    <h2 id="w-tytul" tabindex="-1"></h2>
+    <p class="ask" id="w-pytanie"></p>
+    <div class="buttons" id="w-przyciski">
+      <button type="button" class="btn btn-yes" id="w-tak">Tak</button>
+      <button type="button" class="btn btn-no" id="w-nie">Nie</button>
+    </div>
+    <p class="reply" id="w-odp" aria-live="polite" hidden></p>
+    <button type="button" class="btn btn-next" id="w-dalej" hidden>Dalej →</button>
+  </section>
+
+  <!-- 6. List -->
+  <section class="screen" id="list" hidden>
+    <div class="eyebrow"><div class="moon" style="--lit: 13px" aria-hidden="true"></div><span>Ode mnie</span></div>
+    <h1 tabindex="-1" style="font-size: 48px; line-height: 1.02;">Co do Ciebie <em>czuję</em></h1>
+    <article class="letter">
+      <p class="greeting"><span data-fill="imie"></span>,</p>
+      <div id="list-tresc" style="display: flex; flex-direction: column; gap: 14px;"></div>
+      <p class="sign">Twój <span data-fill="podpis"></span></p>
+    </article>
+    <p class="ask">Przeczytałaś do końca?</p>
+    <div class="buttons">
+      <button type="button" class="btn btn-yes" id="list-tak">Tak</button>
+      <button type="button" class="btn btn-no" id="list-nie">Nie</button>
+    </div>
+    <p class="hand" id="list-odp" aria-live="polite" hidden>To przeczytaj jeszcze raz. Poczekam.</p>
+  </section>
+
+  <!-- 7. Zaproszenie -->
+  <section class="screen" id="zaproszenie" hidden>
+    <div class="eyebrow"><div class="moon half" aria-hidden="true"></div><span>Pół roku · pół księżyca</span></div>
+    <div class="moon-big" aria-hidden="true"></div>
+    <h1 tabindex="-1" style="font-size: 56px;">Pół roku <em>razem</em>.</h1>
+    <p data-fill="zaproszenie"></p>
+    <dl class="details">
+      <dt>Kiedy</dt><dd data-fill="kiedy"></dd>
+      <dt>Gdzie</dt><dd data-fill="gdzie"></dd>
+      <dt>Ubierz się</dt><dd data-fill="ubior"></dd>
+    </dl>
+    <h2 class="question">Spędzisz ze mną naszą pół rocznicę?</h2>
+    <div class="buttons">
+      <button type="button" class="btn btn-yes" id="zapr-tak" style="min-height: 60px; font-size: 20px;">Tak</button>
+      <button type="button" class="btn btn-no" id="zapr-nie" style="min-height: 60px;">Nie</button>
+    </div>
+    <p class="hand" id="zapr-odp" aria-live="polite" style="margin-top: 44px;" hidden></p>
+  </section>
+
+  <!-- 8. Jest randka -->
+  <section class="screen center" id="tak" hidden>
+    <div class="fullmoon-wrap" aria-hidden="true">
+      <div class="fullmoon"></div>
+      <svg class="heart" viewBox="0 0 24 24" style="top: -6px; right: -18px; width: 30px; height: 30px;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#FF8DA1"></path></svg>
+      <svg class="heart" viewBox="0 0 24 24" style="bottom: 4px; left: -22px; width: 22px; height: 22px; animation-delay: -2s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="#FF8DA1" stroke-width="2"></path></svg>
+    </div>
+    <h1 tabindex="-1" style="font-size: 64px;">Jest <em>randka</em>!</h1>
+    <p style="text-wrap: balance;" data-fill="naKoniec"></p>
+    <div class="date-card">
+      <span class="label">Widzimy się</span>
+      <span class="when" data-fill="widzimySieKiedy"></span>
+      <span data-fill="widzimySieGdzie"></span>
+    </div>
+    <p class="hand" style="font-size: 27px; line-height: 1.25;">Zrób zrzut ekranu i wyślij mi go. Wtedy będę wiedział na pewno.</p>
+    <button type="button" class="link-quiet" id="od-nowa">Obejrzyj jeszcze raz</button>
+  </section>
+
+</main>
+
+<script>
+/* =====================================================================
+   TEKSTY I ZDJĘCIA
+   Zdjęcia leżą w folderze "zdjecia"; ścieżkę wpisuje się w polu zdjecie.
+   ===================================================================== */
+const DANE = {
+  imie: 'Justynko',
+  podpis: 'Kacper',
+  zaproszenie: 'Już 19.10.2026 minie dokładnie sześć miesięcy, odkąd jesteśmy razem, odkąd jestem największym szczęściarzem. Pół roku, pół księżyca, ja i Ty, moja przyszła żona. Chciałbym ten dzień spędzić z Tobą jak z nikim dotąd.',
+  kiedy: '17.10.2026\n14:30–24:00',
+  gdzie: 'Niespodzianka',
+  ubior: 'Najpierw wygodnie, a potem bardzo elegancko',
+
+  // Ostatni ekran, po „Tak”.
+  naKoniec: 'Pół roku za nami. Całe życie przed nami.',
+  widzimySieKiedy: '17.10.2026',
+  widzimySieGdzie: '„Thailantis”',
+
+  // Twój list: każdy element to osobny akapit.
+  list: [
+    'Kocham Cię nad całe życie, Twój uśmiech codziennie dodaje mi chęci do życia i wspinania się jeszcze wyżej.',
+    'Najbardziej zachwyca mnie w Tobie to, jaki komfort mi dajesz, to, jakim ciepłem mnie otulasz. Kocham Twoją troskliwość i to, że pomimo tak krótkiego związku chcę, żebyś była najlepszą na świecie mamą dla naszych dzieci.',
+    'Chcę z Tobą przeżyć i być, żyć i się starzeć, chcę dać Ci wszystkie róże świata, chcę Cię kochać i być kochany tylko przez Ciebie. Tak naprawdę chciałbym w życiu wiele, ale najbardziej kolejnych dni z Tobą obok.'
+  ],
+
+  wspomnienia: [
+    {
+      zdjecie: 'zdjecia/1-kwiatki.jpg',
+      opisZdjecia: 'Bukiet białych róż',
+      podpis: '22.03.2026',
+      tytul: 'Pierwsze kwiatuszki…',
+      pytanie: 'Pamiętasz ten dzień? Ja pamiętam, jak mocno ściskałem je, jadąc do Ciebie.',
+      tak: 'Ja też. Takich chwil się nie zapomina.',
+      nie: 'To spójrz jeszcze raz na te róże. Ja pamiętam każdy szczegół.'
+    },
+    {
+      zdjecie: 'zdjecia/2-tory.jpg',
+      opisZdjecia: 'Justyna i Kacper na stacji Tropea',
+      podpis: '18.04.2026',
+      tytul: 'Nasz pierwszy wspólny wyjazd',
+      pytanie: 'A to pamiętasz? Bo ja tak bardzo się stresowałem, bo wiedziałem, co chcę zrobić…',
+      tak: 'Wiedziałem. Ten stres był wart każdej minuty.',
+      nie: 'Jak mogłaś zapomnieć! Tropea, my dwoje i mój wielki stres.'
+    },
+    {
+      zdjecie: 'zdjecia/3-woda.jpg',
+      opisZdjecia: 'Nasze sylwetki z deską SUP nad morzem',
+      podpis: '19.04.2026',
+      tytul: 'I ten najważniejszy moment',
+      pytanie: 'Pamiętasz, jak było? Jak „razem” byliśmy pierwszy raz szczęśliwi.',
+      tak: 'Też mam to przed oczami. Od tego dnia jesteśmy razem.',
+      nie: 'To posłuchaj: tego dnia zaczęło się nasze „razem”.'
+    },
+    {
+      zdjecie: 'zdjecia/4-twarze.jpg',
+      opisZdjecia: 'Nasze wspólne selfie w słońcu',
+      podpis: 'Po prostu my',
+      tytul: 'Zwykły dzień, który był najlepszy',
+      pytanie: 'A ten dzień pamiętasz?',
+      tak: 'Ja też. Najlepsze są te zwykłe chwile z Tobą.',
+      nie: 'To spójrz: Ty, ja, słońce i te nasze miny.'
+    },
+    {
+      zdjecie: 'zdjecia/5-stadion.jpg',
+      opisZdjecia: 'Selfie na stadionie przed koncertem',
+      podpis: '15.05.2026',
+      tytul: '„Nie lubisz ze mną milczeć, bo to niezręczne”',
+      pytanie: 'A ten moment? Połączyliśmy wtedy naszą pasję muzyczną z kolejnym wspólnym wyjazdem.',
+      tak: 'Ja też. I chcę mieć takich więcej.',
+      nie: 'Nic nie szkodzi, ja pamiętam za nas dwoje: muzyka, tłum i Ty obok mnie.'
+    }
+  ]
+};
+/* ===================================================================== */
+
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollBehavior = reduceMotion ? 'auto' : 'smooth';
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const screens = ['koperta', 'wspomnienie', 'list', 'zaproszenie', 'tak'];
+  const tilts = ['-2deg', '1.8deg', '-1.2deg', '-1.6deg', '2.2deg'];
+  const phases = [3, 5, 7, 9, 11];
+
+  document.querySelectorAll('[data-fill]').forEach((el) => {
+    el.textContent = DANE[el.dataset.fill] || '';
+  });
+  DANE.list.forEach((akapit) => {
+    const p = document.createElement('p');
+    p.textContent = akapit;
+    $('list-tresc').appendChild(p);
+  });
+
+  // Gdy "Nie" się podda, "Tak" zajmuje całą szerokość.
+  // Bez animacji, żeby rozciągnięty przycisk nie wyjechał na chwilę poza ekran.
+  function giveUp(prefix) {
+    const tak = $(prefix + '-tak');
+    $(prefix + '-nie').hidden = true;
+    tak.style.transition = 'none';
+    tak.style.transform = 'none';
+    tak.style.gridColumn = '1 / -1';
+    void tak.offsetWidth;
+    tak.style.transition = '';
+  }
+
+  function show(id) {
+    screens.forEach((s) => { $(s).hidden = s !== id; });
+    window.scrollTo(0, 0);
+    const heading = $(id).querySelector('h1, h2');
+    if (heading) heading.focus({ preventScroll: true });
+  }
+
+  // 1. Koperta: "Nie" się poddaje po czterech kliknięciach.
+  let kopertaNie = 0;
+  const kopertaEtykiety = ['Nie', 'Na pewno?', 'Serio?', 'Ostatnia szansa'];
+  const kopertaOdp = [
+    'Hmm, chyba palec Ci się omsknął.',
+    'Wiem, że jesteś ciekawa.',
+    'Zobacz, „Tak” robi się coraz większe.',
+    'No i „Nie” się poddało. Zostało tylko „Tak”.'
+  ];
+  $('koperta-nie').addEventListener('click', () => {
+    kopertaNie += 1;
+    $('koperta-odp').textContent = kopertaOdp[Math.min(kopertaNie, kopertaOdp.length) - 1];
+    $('koperta-odp').hidden = false;
+    if (kopertaNie >= 4) { giveUp('koperta'); return; }
+    $('koperta-tak').style.transform = 'scale(' + (1 + kopertaNie * 0.08) + ')';
+    $('koperta-nie').textContent = kopertaEtykiety[kopertaNie];
+  });
+  function openEnvelope() {
+    const env = $('koperta-env');
+    if (env.classList.contains('open')) return;
+    env.classList.add('open');
+    env.setAttribute('aria-label', 'Koperta otwarta');
+    $('koperta-pytanie').hidden = true;
+    $('koperta-dalej').hidden = false;
+    // Przycisk jest niewidoczny i nieklikalny, dopóki koperta się nie otworzy.
+    setTimeout(() => {
+      $('koperta-dalej').focus({ preventScroll: true });
+      $('koperta-dalej').scrollIntoView({ behavior: scrollBehavior, block: 'nearest' });
+    }, reduceMotion ? 0 : 1400);
+  }
+  $('koperta-env').addEventListener('click', openEnvelope);
+  $('koperta-tak').addEventListener('click', openEnvelope);
+  $('koperta-dalej').addEventListener('click', () => showMemory(0));
+
+  // 2–5. Wspomnienia
+  let current = 0;
+  function showMemory(i) {
+    current = i;
+    const w = DANE.wspomnienia[i];
+    $('w-licznik').textContent = 'Wspomnienie ' + (i + 1) + ' z ' + DANE.wspomnienia.length;
+    $('w-moon').style.setProperty('--lit', phases[Math.min(i, phases.length - 1)] + 'px');
+    $('w-polaroid').style.setProperty('--tilt', tilts[i % tilts.length]);
+    const foto = $('w-foto');
+    foto.replaceChildren();
+    if (w.zdjecie) {
+      const img = document.createElement('img');
+      img.src = w.zdjecie;
+      img.alt = w.opisZdjecia || w.tytul;
+      foto.appendChild(img);
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'photo-empty';
+      empty.setAttribute('aria-hidden', 'true');
+      empty.textContent = w.etykietaZdjecia ?? '[Zdjęcie ' + (i + 1) + ']';
+      foto.appendChild(empty);
+    }
+    $('w-podpis').textContent = w.podpis;
+    $('w-tytul').textContent = w.tytul;
+    $('w-pytanie').textContent = w.pytanie;
+    $('w-przyciski').hidden = false;
+    $('w-odp').hidden = true;
+    $('w-dalej').hidden = true;
+    $('w-dalej').textContent = i === DANE.wspomnienia.length - 1 ? 'Mam dla Ciebie jeszcze list →' : 'Dalej →';
+    show('wspomnienie');
+  }
+  function answerMemory(yes) {
+    const w = DANE.wspomnienia[current];
+    $('w-przyciski').hidden = true;
+    $('w-odp').textContent = yes ? w.tak : w.nie;
+    $('w-odp').hidden = false;
+    $('w-dalej').hidden = false;
+    $('w-dalej').focus({ preventScroll: true });
+    $('w-dalej').scrollIntoView({ behavior: scrollBehavior, block: 'center' });
+  }
+  $('w-tak').addEventListener('click', () => answerMemory(true));
+  $('w-nie').addEventListener('click', () => answerMemory(false));
+  $('w-dalej').addEventListener('click', () => {
+    if (current < DANE.wspomnienia.length - 1) showMemory(current + 1);
+    else show('list');
+  });
+
+  // 6. List
+  $('list-tak').addEventListener('click', () => show('zaproszenie'));
+  $('list-nie').addEventListener('click', () => {
+    $('list-odp').hidden = false;
+    $('list-odp').scrollIntoView({ behavior: scrollBehavior, block: 'nearest' });
+  });
+
+  // 7. Zaproszenie: "Nie" ucieka, maleje i w końcu znika.
+  let zaprNie = 0;
+  const zaprEtykiety = ['Nie', 'Na pewno?', 'Przemyśl to', 'Proszę…'];
+  const zaprOdp = [
+    'Ups, chyba nie trafiłaś.',
+    'Ten przycisk ucieka, bo zna dobrą odpowiedź.',
+    '„Tak” jest już całkiem duże. Wystarczy kliknąć.',
+    'Przycisk „Nie” właśnie zrezygnował. Zostało tylko „Tak”.'
+  ];
+  const miejsca = [[0, 0], [-24, -26], [16, 44], [-48, 20]];
+  $('zapr-nie').addEventListener('click', () => {
+    zaprNie += 1;
+    $('zapr-odp').textContent = zaprOdp[Math.min(zaprNie, zaprOdp.length) - 1];
+    $('zapr-odp').hidden = false;
+    if (zaprNie >= 4) { giveUp('zapr'); return; }
+    $('zapr-tak').style.transform = 'scale(' + (1 + zaprNie * 0.1) + ')';
+    const m = miejsca[zaprNie];
+    $('zapr-nie').style.transform = 'translate(' + m[0] + 'px, ' + m[1] + 'px) scale(' + (1 - zaprNie * 0.1) + ')';
+    $('zapr-nie').textContent = zaprEtykiety[zaprNie];
+  });
+  $('zapr-tak').addEventListener('click', () => show('tak'));
+
+  // 8. Od nowa
+  $('od-nowa').addEventListener('click', () => { window.scrollTo(0, 0); location.reload(); });
+})();
+</script>
+</body>
+</html>
