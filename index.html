@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#5C1A42">
+<meta name="robots" content="noindex, nofollow">
 <title>Nasze pół roku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,7 +185,7 @@
     padding: 20px 22px; border-radius: 16px; background: var(--dusk); border: 1px solid rgba(245, 230, 184, .22);
   }
   .details dt { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
-  .details dd { margin: 0; font-weight: 600; color: var(--moon); }
+  .details dd { margin: 0; font-weight: 600; color: var(--moon); white-space: pre-line; }
 
   .fullmoon-wrap { position: relative; width: 168px; height: 168px; }
   .fullmoon {
@@ -313,7 +314,7 @@
     <div class="eyebrow"><div class="moon half" aria-hidden="true"></div><span>Pół roku · pół księżyca</span></div>
     <div class="moon-big" aria-hidden="true"></div>
     <h1 tabindex="-1" style="font-size: 56px;">Pół roku <em>razem</em>.</h1>
-    <p><span data-fill="dataRocznicy"></span> minie dokładnie sześć miesięcy, odkąd jesteśmy razem. Pół roku, pół księżyca i Ty, moja druga połówka. Chcę spędzić ten dzień z Tobą.</p>
+    <p data-fill="zaproszenie"></p>
     <dl class="details">
       <dt>Kiedy</dt><dd data-fill="kiedy"></dd>
       <dt>Gdzie</dt><dd data-fill="gdzie"></dd>
@@ -335,11 +336,11 @@
       <svg class="heart" viewBox="0 0 24 24" style="bottom: 4px; left: -22px; width: 22px; height: 22px; animation-delay: -2s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="#FF8DA1" stroke-width="2"></path></svg>
     </div>
     <h1 tabindex="-1" style="font-size: 64px;">Jest <em>randka</em>!</h1>
-    <p style="text-wrap: balance;">Pół roku za nami. Cała reszta przed nami.</p>
+    <p style="text-wrap: balance;" data-fill="naKoniec"></p>
     <div class="date-card">
       <span class="label">Widzimy się</span>
-      <span class="when" data-fill="kiedy"></span>
-      <span data-fill="gdzie"></span>
+      <span class="when" data-fill="widzimySieKiedy"></span>
+      <span data-fill="widzimySieGdzie"></span>
     </div>
     <p class="hand" style="font-size: 27px; line-height: 1.25;">Zrób zrzut ekranu i wyślij mi go. Wtedy będę wiedział na pewno.</p>
     <button type="button" class="link-quiet" id="od-nowa">Obejrzyj jeszcze raz</button>
@@ -349,62 +350,74 @@
 
 <script>
 /* =====================================================================
-   TU WPISUJESZ SWOJE TEKSTY
-   Wszystko w nawiasach [ ] zamień na swoje słowa.
-   Zdjęcia wrzuć do folderu "zdjecia" i wpisz nazwę pliku, np. 'zdjecia/1.jpg'.
+   TEKSTY I ZDJĘCIA
+   Zdjęcia leżą w folderze "zdjecia"; ścieżkę wpisuje się w polu zdjecie.
    ===================================================================== */
 const DANE = {
   imie: 'Justynko',
-  podpis: '[Twoje imię]',
-  dataRocznicy: '[Data rocznicy]',
-  kiedy: '[dzień, data, godzina]',
-  gdzie: '[miejsce albo „niespodzianka”]',
-  ubior: '[np. wygodnie / elegancko]',
+  podpis: 'Kacper',
+  zaproszenie: 'Już 19.10.2026 minie dokładnie sześć miesięcy, odkąd jesteśmy razem, odkąd jestem największym szczęściarzem. Pół roku, pół księżyca, ja i Ty, moja przyszła żona. Chciałbym ten dzień spędzić z Tobą jak z nikim dotąd.',
+  kiedy: '17.10.2026\n14:30–24:00',
+  gdzie: 'Niespodzianka',
+  ubior: 'Najpierw wygodnie, a potem bardzo elegancko',
+
+  // Ostatni ekran, po „Tak”.
+  naKoniec: 'Pół roku za nami. Całe życie przed nami.',
+  widzimySieKiedy: '17.10.2026',
+  widzimySieGdzie: '„Thailantis”',
 
   // Twój list: każdy element to osobny akapit.
   list: [
-    '[Tu wpisz swój list. Zacznij od tego, co do niej czujesz.]',
-    '[Drugi akapit: co Cię w niej zachwyca i za co jesteś wdzięczny po tych sześciu miesiącach.]',
-    '[Trzeci akapit: co chcesz z nią jeszcze przeżyć.]'
+    'Kocham Cię nad całe życie, Twój uśmiech codziennie dodaje mi chęci do życia i wspinania się jeszcze wyżej.',
+    'Najbardziej zachwyca mnie w Tobie to, jaki komfort mi dajesz, to, jakim ciepłem mnie otulasz. Kocham Twoją troskliwość i to, że pomimo tak krótkiego związku chcę, żebyś była najlepszą na świecie mamą dla naszych dzieci.',
+    'Chcę z Tobą przeżyć i być, żyć i się starzeć, chcę dać Ci wszystkie róże świata, chcę Cię kochać i być kochany tylko przez Ciebie. Tak naprawdę chciałbym w życiu wiele, ale najbardziej kolejnych dni z Tobą obok.'
   ],
 
   wspomnienia: [
     {
-      zdjecie: '',
-      etykietaZdjecia: '',
-      opisZdjecia: '',
-      podpis: '22 marca 2026',
-      tytul: 'Pierwsze kwiatuszki..',
-      pytanie: 'Pamiętasz ten dzień?',
-      tak: 'Ja też. [Jedno zdanie o tym, co Ty najbardziej zapamiętałeś z tego dnia.]',
-      nie: 'To Ci przypomnę: [krótko, co się wtedy wydarzyło.]'
+      zdjecie: 'zdjecia/1-kwiatki.jpg',
+      opisZdjecia: 'Bukiet białych róż',
+      podpis: '22.03.2026',
+      tytul: 'Pierwsze kwiatuszki…',
+      pytanie: 'Pamiętasz ten dzień? Ja pamiętam, jak mocno ściskałem je, jadąc do Ciebie.',
+      tak: 'Ja też. Takich chwil się nie zapomina.',
+      nie: 'To spójrz jeszcze raz na te róże. Ja pamiętam każdy szczegół.'
     },
     {
-      zdjecie: '',
-      opisZdjecia: '',
-      podpis: '[Data · miejsce]',
-      tytul: '[Tytuł, np. Nasz pierwszy wspólny wyjazd]',
-      pytanie: 'A to pamiętasz?',
-      tak: 'Wiedziałem. [Jedno zdanie o tym, co tam razem przeżyliście.]',
-      nie: 'Jak mogłaś zapomnieć! [krótko, co się wtedy wydarzyło.]'
+      zdjecie: 'zdjecia/2-tory.jpg',
+      opisZdjecia: 'Justyna i Kacper na stacji Tropea',
+      podpis: '18.04.2026',
+      tytul: 'Nasz pierwszy wspólny wyjazd',
+      pytanie: 'A to pamiętasz? Bo ja tak bardzo się stresowałem, bo wiedziałem, co chcę zrobić…',
+      tak: 'Wiedziałem. Ten stres był wart każdej minuty.',
+      nie: 'Jak mogłaś zapomnieć! Tropea, my dwoje i mój wielki stres.'
     },
     {
-      zdjecie: '',
-      opisZdjecia: '',
-      podpis: '[Data · miejsce]',
-      tytul: '[Tytuł, np. Ten wieczór, kiedy…]',
-      pytanie: 'Pamiętasz, jak było?',
-      tak: 'Też mam to przed oczami. [Jedno zdanie o tym momencie.]',
-      nie: 'To posłuchaj: [krótko, co się wtedy wydarzyło.]'
+      zdjecie: 'zdjecia/3-woda.jpg',
+      opisZdjecia: 'Nasze sylwetki z deską SUP nad morzem',
+      podpis: '19.04.2026',
+      tytul: 'I ten najważniejszy moment',
+      pytanie: 'Pamiętasz, jak było? Jak „razem” byliśmy pierwszy raz szczęśliwi.',
+      tak: 'Też mam to przed oczami. Od tego dnia jesteśmy razem.',
+      nie: 'To posłuchaj: tego dnia zaczęło się nasze „razem”.'
     },
     {
-      zdjecie: '',
-      opisZdjecia: '',
-      podpis: '[Data · miejsce]',
-      tytul: '[Tytuł, np. Zwykły dzień, który był najlepszy]',
-      pytanie: 'A ten moment?',
-      tak: 'Ja też. I chcę mieć takich więcej. [Możesz dopisać jedno zdanie.]',
-      nie: 'Nic nie szkodzi, ja pamiętam za nas dwoje: [krótko, co się wtedy wydarzyło.]'
+      zdjecie: 'zdjecia/4-twarze.jpg',
+      opisZdjecia: 'Nasze wspólne selfie w słońcu',
+      podpis: 'Po prostu my',
+      tytul: 'Zwykły dzień, który był najlepszy',
+      pytanie: 'A ten dzień pamiętasz?',
+      tak: 'Ja też. Najlepsze są te zwykłe chwile z Tobą.',
+      nie: 'To spójrz: Ty, ja, słońce i te nasze miny.'
+    },
+    {
+      zdjecie: 'zdjecia/5-stadion.jpg',
+      opisZdjecia: 'Selfie na stadionie przed koncertem',
+      podpis: '15.05.2026',
+      tytul: '„Nie lubisz ze mną milczeć, bo to niezręczne”',
+      pytanie: 'A ten moment? Połączyliśmy wtedy naszą pasję muzyczną z kolejnym wspólnym wyjazdem.',
+      tak: 'Ja też. I chcę mieć takich więcej.',
+      nie: 'Nic nie szkodzi, ja pamiętam za nas dwoje: muzyka, tłum i Ty obok mnie.'
     }
   ]
 };
@@ -416,8 +429,8 @@ const DANE = {
   const scrollBehavior = reduceMotion ? 'auto' : 'smooth';
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   const screens = ['koperta', 'wspomnienie', 'list', 'zaproszenie', 'tak'];
-  const tilts = ['-2deg', '1.8deg', '-1.2deg', '2.2deg'];
-  const phases = [4, 7, 10, 12];
+  const tilts = ['-2deg', '1.8deg', '-1.2deg', '-1.6deg', '2.2deg'];
+  const phases = [3, 5, 7, 9, 11];
 
   document.querySelectorAll('[data-fill]').forEach((el) => {
     el.textContent = DANE[el.dataset.fill] || '';

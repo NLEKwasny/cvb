@@ -1,17 +1,18 @@
 # Nasze pół roku
 
-Zaproszenie na pół rocznicy w formie strony na telefon: koperta, cztery wspomnienia ze zdjęciami (pytanie „Pamiętasz?” z odpowiedzią Tak/Nie), list i pytanie „Spędzisz ze mną naszą pół rocznicę?”. Przycisk „Nie” w tym pytaniu ucieka.
+Zaproszenie na pół rocznicy w formie strony na telefon: otwierana koperta, pięć wspomnień ze zdjęciami (pytanie „Pamiętasz?” z odpowiedzią Tak/Nie), list i pytanie „Spędzisz ze mną naszą pół rocznicę?”. Przycisk „Nie” w tym pytaniu ucieka.
 
-## Jak uzupełnić
+## Jak zmienić treść
 
-Wszystko, co trzeba uzupełnić, jest w bloku `DANE` na dole pliku `index.html`:
+Wszystkie teksty są w bloku `DANE` na dole pliku `index.html`:
 
 - `imie`, `podpis`: jej imię i Twoje,
-- `dataRocznicy`, `kiedy`, `gdzie`, `ubior`: szczegóły randki,
+- `zaproszenie`, `kiedy`, `gdzie`, `ubior`: tekst zaproszenia i szczegóły randki,
+- `naKoniec`, `widzimySieKiedy`, `widzimySieGdzie`: ostatni ekran po „Tak”,
 - `list`: Twój list, jeden akapit na element,
 - `wspomnienia`: zdjęcie, podpis, tytuł i reakcje na „Tak” i „Nie”.
 
-Zdjęcia wrzuć do folderu `zdjecia/` i wpisz ścieżkę, np. `zdjecia/1.jpg`.
+Zdjęcia leżą w folderze `zdjecia/`, a ścieżkę wpisuje się w polu `zdjecie`, np. `zdjecia/1-kwiatki.jpg`.
 
 ## Jak otworzyć na telefonie
 
