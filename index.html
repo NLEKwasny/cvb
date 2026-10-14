@@ -113,6 +113,7 @@
     position: absolute; inset: 0; border-radius: 10px; z-index: 3;
     background: linear-gradient(160deg, var(--env-pocket) 0%, var(--env-pocket-2) 100%);
     clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+    will-change: transform; /* bez własnej warstwy Chrome gubi wycięcie w trakcie animacji */
   }
   .env-flap {
     position: absolute; left: 0; right: 0; top: 0; height: 58%; border-radius: 10px 10px 0 0; z-index: 4;
@@ -134,7 +135,7 @@
   .env.open .env-seal { opacity: 0; transform: scale(.4); }
   .env.open .env-letter { transform: translateY(-58%); }
   .env.open .env-heart { animation: pop 1.8s ease-out 1s forwards; }
-  .after-open { animation: rise .5s ease-out 1.3s both; }
+  .after-open { animation: reveal .5s ease-out 1.3s both; }
 
   .buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-block: 4px; }
   .btn {
@@ -219,6 +220,10 @@
     0%, 100% { transform: translateY(0) rotate(-8deg); }
     50% { transform: translateY(-10px) rotate(6deg); }
   }
+  @keyframes reveal {
+    from { opacity: 0; visibility: hidden; transform: translateY(10px); }
+    to { opacity: 1; visibility: visible; transform: none; }
+  }
   @keyframes bob {
     0%, 100% { transform: translateY(0) rotate(-1deg); }
     50% { transform: translateY(-6px) rotate(1deg); }
@@ -230,6 +235,9 @@
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-height: 700px) {
+    .env { max-width: 220px; margin-top: 60px; }
   }
   @media (max-width: 360px) {
     h1 { font-size: 50px; }
@@ -363,6 +371,7 @@ const DANE = {
   wspomnienia: [
     {
       zdjecie: '',
+      etykietaZdjecia: '',
       opisZdjecia: '',
       podpis: '22 marca 2026',
       tytul: 'Pierwsze kwiatuszki..',
@@ -403,6 +412,9 @@ const DANE = {
 
 (function () {
   const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollBehavior = reduceMotion ? 'auto' : 'smooth';
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   const screens = ['koperta', 'wspomnienie', 'list', 'zaproszenie', 'tak'];
   const tilts = ['-2deg', '1.8deg', '-1.2deg', '2.2deg'];
   const phases = [4, 7, 10, 12];
@@ -417,10 +429,15 @@ const DANE = {
   });
 
   // Gdy "Nie" się podda, "Tak" zajmuje całą szerokość.
+  // Bez animacji, żeby rozciągnięty przycisk nie wyjechał na chwilę poza ekran.
   function giveUp(prefix) {
+    const tak = $(prefix + '-tak');
     $(prefix + '-nie').hidden = true;
-    $(prefix + '-tak').style.transform = 'none';
-    $(prefix + '-tak').style.gridColumn = '1 / -1';
+    tak.style.transition = 'none';
+    tak.style.transform = 'none';
+    tak.style.gridColumn = '1 / -1';
+    void tak.offsetWidth;
+    tak.style.transition = '';
   }
 
   function show(id) {
@@ -441,10 +458,10 @@ const DANE = {
   ];
   $('koperta-nie').addEventListener('click', () => {
     kopertaNie += 1;
-    $('koperta-tak').style.transform = 'scale(' + (1 + kopertaNie * 0.08) + ')';
     $('koperta-odp').textContent = kopertaOdp[Math.min(kopertaNie, kopertaOdp.length) - 1];
     $('koperta-odp').hidden = false;
     if (kopertaNie >= 4) { giveUp('koperta'); return; }
+    $('koperta-tak').style.transform = 'scale(' + (1 + kopertaNie * 0.08) + ')';
     $('koperta-nie').textContent = kopertaEtykiety[kopertaNie];
   });
   function openEnvelope() {
@@ -454,7 +471,11 @@ const DANE = {
     env.setAttribute('aria-label', 'Koperta otwarta');
     $('koperta-pytanie').hidden = true;
     $('koperta-dalej').hidden = false;
-    $('koperta-dalej').focus({ preventScroll: true });
+    // Przycisk jest niewidoczny i nieklikalny, dopóki koperta się nie otworzy.
+    setTimeout(() => {
+      $('koperta-dalej').focus({ preventScroll: true });
+      $('koperta-dalej').scrollIntoView({ behavior: scrollBehavior, block: 'nearest' });
+    }, reduceMotion ? 0 : 1400);
   }
   $('koperta-env').addEventListener('click', openEnvelope);
   $('koperta-tak').addEventListener('click', openEnvelope);
@@ -478,7 +499,8 @@ const DANE = {
     } else {
       const empty = document.createElement('div');
       empty.className = 'photo-empty';
-      empty.textContent = '[Zdjęcie ' + (i + 1) + ']';
+      empty.setAttribute('aria-hidden', 'true');
+      empty.textContent = w.etykietaZdjecia ?? '[Zdjęcie ' + (i + 1) + ']';
       foto.appendChild(empty);
     }
     $('w-podpis').textContent = w.podpis;
@@ -497,7 +519,7 @@ const DANE = {
     $('w-odp').hidden = false;
     $('w-dalej').hidden = false;
     $('w-dalej').focus({ preventScroll: true });
-    $('w-dalej').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('w-dalej').scrollIntoView({ behavior: scrollBehavior, block: 'center' });
   }
   $('w-tak').addEventListener('click', () => answerMemory(true));
   $('w-nie').addEventListener('click', () => answerMemory(false));
@@ -510,7 +532,7 @@ const DANE = {
   $('list-tak').addEventListener('click', () => show('zaproszenie'));
   $('list-nie').addEventListener('click', () => {
     $('list-odp').hidden = false;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    $('list-odp').scrollIntoView({ behavior: scrollBehavior, block: 'nearest' });
   });
 
   // 7. Zaproszenie: "Nie" ucieka, maleje i w końcu znika.
@@ -522,13 +544,13 @@ const DANE = {
     '„Tak” jest już całkiem duże. Wystarczy kliknąć.',
     'Przycisk „Nie” właśnie zrezygnował. Zostało tylko „Tak”.'
   ];
-  const miejsca = [[0, 0], [-24, -40], [16, 44], [-48, 20]];
+  const miejsca = [[0, 0], [-24, -26], [16, 44], [-48, 20]];
   $('zapr-nie').addEventListener('click', () => {
     zaprNie += 1;
-    $('zapr-tak').style.transform = 'scale(' + (1 + zaprNie * 0.1) + ')';
     $('zapr-odp').textContent = zaprOdp[Math.min(zaprNie, zaprOdp.length) - 1];
     $('zapr-odp').hidden = false;
     if (zaprNie >= 4) { giveUp('zapr'); return; }
+    $('zapr-tak').style.transform = 'scale(' + (1 + zaprNie * 0.1) + ')';
     const m = miejsca[zaprNie];
     $('zapr-nie').style.transform = 'translate(' + m[0] + 'px, ' + m[1] + 'px) scale(' + (1 - zaprNie * 0.1) + ')';
     $('zapr-nie').textContent = zaprEtykiety[zaprNie];
@@ -536,7 +558,7 @@ const DANE = {
   $('zapr-tak').addEventListener('click', () => show('tak'));
 
   // 8. Od nowa
-  $('od-nowa').addEventListener('click', () => location.reload());
+  $('od-nowa').addEventListener('click', () => { window.scrollTo(0, 0); location.reload(); });
 })();
 </script>
 </body>
