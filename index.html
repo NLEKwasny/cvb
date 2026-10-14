@@ -3,21 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#17112A">
+<meta name="theme-color" content="#5C1A42">
 <title>Nasze pół roku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap">
 <style>
-  /* Nocne niebo, jedna kolumna pod telefon. Księżyc rośnie z każdym ekranem: pół roku = pół księżyca. */
+  /* Malinowe nocne niebo, jedna kolumna pod telefon. Księżyc rośnie z każdym ekranem: pół roku = pół księżyca. */
   :root {
-    --night: #17112A;
-    --dusk: #241A3D;
+    --night: #5C1A42;
+    --dusk: #7A2858;
     --moon: #F5E6B8;
     --rose: #FF8DA1;
-    --lilac: #C9BEE3;
+    --blush: #F9D5E5;
     --paper: #F8F5EF;
-    --ink: #241A3D;
+    --ink: #5A1340;
+    --env-back: #6E2150;
+    --env-pocket: #8E3168;
+    --env-pocket-2: #7E2A5C;
+    --env-flap: #A6417C;
+    --env-flap-2: #943670;
     --display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
     --body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
@@ -30,17 +35,17 @@
     background-color: var(--night);
     background-image:
       radial-gradient(1.5px 1.5px at 8% 12%, var(--moon) 99%, transparent),
-      radial-gradient(1px 1px at 22% 38%, var(--lilac) 99%, transparent),
+      radial-gradient(1px 1px at 22% 38%, var(--blush) 99%, transparent),
       radial-gradient(1.5px 1.5px at 78% 9%, var(--moon) 99%, transparent),
-      radial-gradient(1px 1px at 91% 31%, var(--lilac) 99%, transparent),
+      radial-gradient(1px 1px at 91% 31%, var(--blush) 99%, transparent),
       radial-gradient(1px 1px at 64% 22%, var(--moon) 99%, transparent),
-      radial-gradient(1.5px 1.5px at 40% 5%, var(--lilac) 99%, transparent),
-      radial-gradient(1px 1px at 12% 70%, var(--lilac) 99%, transparent),
+      radial-gradient(1.5px 1.5px at 40% 5%, var(--blush) 99%, transparent),
+      radial-gradient(1px 1px at 12% 70%, var(--blush) 99%, transparent),
       radial-gradient(1px 1px at 86% 64%, var(--moon) 99%, transparent),
-      radial-gradient(1.5px 1.5px at 55% 88%, var(--lilac) 99%, transparent),
+      radial-gradient(1.5px 1.5px at 55% 88%, var(--blush) 99%, transparent),
       radial-gradient(1px 1px at 30% 95%, var(--moon) 99%, transparent);
     background-size: 100% 900px;
-    color: var(--lilac);
+    color: var(--blush);
     font-family: var(--body);
     font-size: 18px;
     line-height: 1.6;
@@ -63,7 +68,7 @@
 
   .eyebrow { display: flex; align-items: center; gap: 12px; }
   .eyebrow span {
-    font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--lilac);
+    font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--blush);
   }
   .moon {
     width: 28px; height: 28px; flex: none; border-radius: 50%;
@@ -86,7 +91,50 @@
   .big-ask { font-family: var(--display); font-size: 34px; line-height: 1.1; color: var(--moon); }
   .hand { font-family: var(--hand); font-size: 26px; line-height: 1.2; color: var(--rose); animation: rise .35s ease-out; }
 
-  .envelope { width: 100%; max-width: 280px; height: auto; align-self: center; }
+  /* Koperta: klapka odchyla się w 3D, pieczęć znika, list wysuwa się do góry. */
+  .env {
+    position: relative; display: block; width: 100%; max-width: 260px; aspect-ratio: 11 / 7;
+    margin: 72px auto 0; padding: 0; border: 0; background: none; font: inherit; color: inherit;
+    cursor: pointer; perspective: 900px; -webkit-appearance: none; appearance: none;
+    animation: bob 3.2s ease-in-out infinite;
+  }
+  .env:focus-visible { outline: 3px solid var(--moon); outline-offset: 8px; border-radius: 12px; }
+  .env.open { animation: none; cursor: default; }
+  .env-back { position: absolute; inset: 0; border-radius: 10px; background: var(--env-back); box-shadow: 0 18px 34px rgba(0, 0, 0, .35); }
+  .env-letter {
+    position: absolute; left: 7%; right: 7%; top: 6%; height: 88%; padding: 10% 12% 0;
+    border-radius: 6px; background: var(--paper); display: flex; flex-direction: column; align-items: center; gap: 8px;
+    z-index: 2; transition: transform .9s cubic-bezier(.2, .9, .25, 1) .45s;
+  }
+  .env-letter-text { font-family: var(--hand); font-size: 30px; font-weight: 600; line-height: 1; color: var(--ink); }
+  .env-line { display: block; width: 70%; height: 2px; border-radius: 2px; background: #EBD3DF; }
+  .env-line.short { width: 50%; }
+  .env-pocket {
+    position: absolute; inset: 0; border-radius: 10px; z-index: 3;
+    background: linear-gradient(160deg, var(--env-pocket) 0%, var(--env-pocket-2) 100%);
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+  }
+  .env-flap {
+    position: absolute; left: 0; right: 0; top: 0; height: 58%; border-radius: 10px 10px 0 0; z-index: 4;
+    background: linear-gradient(180deg, var(--env-flap) 0%, var(--env-flap-2) 100%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0;
+    transition: transform .55s ease-in-out, z-index 0s linear .28s;
+  }
+  .env-seal {
+    position: absolute; left: 50%; top: 58%; width: 38px; height: 38px; margin: -19px 0 0 -19px;
+    border-radius: 50%; background: var(--rose); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); z-index: 5;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .env-seal::after {
+    content: ""; position: absolute; inset: 9px; border-radius: 50%; border: 2px solid var(--night);
+    background: linear-gradient(90deg, transparent 50%, var(--night) 50%);
+  }
+  .env-heart { position: absolute; top: 10%; width: 22px; height: 22px; opacity: 0; z-index: 6; pointer-events: none; }
+  .env.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .env.open .env-seal { opacity: 0; transform: scale(.4); }
+  .env.open .env-letter { transform: translateY(-58%); }
+  .env.open .env-heart { animation: pop 1.8s ease-out 1s forwards; }
+  .after-open { animation: rise .5s ease-out 1.3s both; }
 
   .buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-block: 4px; }
   .btn {
@@ -111,7 +159,7 @@
   .polaroid img, .photo-empty { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
   .photo-empty {
     display: flex; align-items: center; justify-content: center; padding: 16px;
-    background: #E6DEF0; border: 1.5px dashed #8D80AB; color: #4A3D6B;
+    background: #F6DCE8; border: 1.5px dashed #C27A9E; color: #7A2858;
     font-size: 15px; font-weight: 600; text-align: center;
   }
   .polaroid figcaption { font-family: var(--hand); font-size: 26px; line-height: 1.1; color: var(--ink); text-align: center; }
@@ -141,9 +189,9 @@
   .fullmoon {
     width: 168px; height: 168px; border-radius: 50%;
     background:
-      radial-gradient(circle at 34% 38%, rgba(23, 17, 42, .08) 0 12%, transparent 13%),
-      radial-gradient(circle at 64% 64%, rgba(23, 17, 42, .07) 0 9%, transparent 10%),
-      radial-gradient(circle at 60% 28%, rgba(23, 17, 42, .06) 0 6%, transparent 7%),
+      radial-gradient(circle at 34% 38%, rgba(92, 26, 66, .08) 0 12%, transparent 13%),
+      radial-gradient(circle at 64% 64%, rgba(92, 26, 66, .07) 0 9%, transparent 10%),
+      radial-gradient(circle at 60% 28%, rgba(92, 26, 66, .06) 0 6%, transparent 7%),
       var(--moon);
     animation: glow 4s ease-in-out infinite;
   }
@@ -171,6 +219,15 @@
     0%, 100% { transform: translateY(0) rotate(-8deg); }
     50% { transform: translateY(-10px) rotate(6deg); }
   }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: translateY(0) scale(.5); }
+    25% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -186,22 +243,27 @@
   <!-- 1. Koperta -->
   <section class="screen" id="koperta">
     <div class="eyebrow"><div class="moon" aria-hidden="true"></div><span>Dla mojej drugiej połówki</span></div>
-    <h1 tabindex="-1">Hej, <em data-fill="imie"></em>.</h1>
+    <h1 tabindex="-1">Hej, <em data-fill="imie"></em></h1>
     <p>Mam dla Ciebie coś małego. Kilka naszych wspomnień, parę słów ode mnie i jedno ważne pytanie na samym końcu.</p>
-    <svg class="envelope" aria-hidden="true" viewBox="0 0 220 140">
-      <rect x="4" y="4" width="212" height="132" rx="10" fill="#241A3D" stroke="#F5E6B8" stroke-width="2"></rect>
-      <path d="M14 12 L110 80 L206 12" fill="none" stroke="#F5E6B8" stroke-width="2" stroke-linejoin="round"></path>
-      <path d="M12 130 L84 70 M208 130 L136 70" fill="none" stroke="#C9BEE3" stroke-opacity=".45" stroke-width="1.5"></path>
-      <circle cx="110" cy="80" r="19" fill="#FF8DA1"></circle>
-      <circle cx="110" cy="80" r="11" fill="none" stroke="#17112A" stroke-width="2"></circle>
-      <path d="M110 69 A11 11 0 0 1 110 91 Z" fill="#17112A"></path>
-    </svg>
-    <p class="big-ask">Otworzysz?</p>
-    <div class="buttons">
-      <button type="button" class="btn btn-yes" id="koperta-tak">Tak</button>
-      <button type="button" class="btn btn-no" id="koperta-nie">Nie</button>
+    <button type="button" class="env" id="koperta-env" aria-label="Otwórz kopertę">
+      <span class="env-back"></span>
+      <span class="env-letter"><span class="env-letter-text">Dla Ciebie</span><span class="env-line"></span><span class="env-line short"></span></span>
+      <span class="env-pocket"></span>
+      <span class="env-flap"></span>
+      <span class="env-seal"></span>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 14%;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#FF8DA1"></path></svg>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 46%; animation-delay: 1.25s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#F5E6B8"></path></svg>
+      <svg class="env-heart" aria-hidden="true" viewBox="0 0 24 24" style="left: 78%; animation-delay: 1.5s;"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="#FF8DA1" stroke-width="2"></path></svg>
+    </button>
+    <div id="koperta-pytanie" style="display: flex; flex-direction: column; gap: 24px;">
+      <p class="big-ask">Otworzysz?</p>
+      <div class="buttons">
+        <button type="button" class="btn btn-yes" id="koperta-tak">Tak</button>
+        <button type="button" class="btn btn-no" id="koperta-nie">Nie</button>
+      </div>
+      <p class="hand" id="koperta-odp" aria-live="polite" hidden></p>
     </div>
-    <p class="hand" id="koperta-odp" aria-live="polite" hidden></p>
+    <button type="button" class="btn btn-yes after-open" id="koperta-dalej" hidden>Zajrzyj do środka →</button>
   </section>
 
   <!-- 2–5. Wspomnienia (jeden ekran, treść z DANE.wspomnienia) -->
@@ -284,7 +346,7 @@
    Zdjęcia wrzuć do folderu "zdjecia" i wpisz nazwę pliku, np. 'zdjecia/1.jpg'.
    ===================================================================== */
 const DANE = {
-  imie: '[Imię]',
+  imie: 'Justynko',
   podpis: '[Twoje imię]',
   dataRocznicy: '[Data rocznicy]',
   kiedy: '[dzień, data, godzina]',
@@ -303,7 +365,7 @@ const DANE = {
       zdjecie: '',
       opisZdjecia: '',
       podpis: '[Data · miejsce]',
-      tytul: '[Tytuł, np. Nasza pierwsza randka]',
+      tytul: 'Pierwsze kwiatuszki..',
       pytanie: 'Pamiętasz ten dzień?',
       tak: 'Ja też. [Jedno zdanie o tym, co Ty najbardziej zapamiętałeś z tego dnia.]',
       nie: 'To Ci przypomnę: [krótko, co się wtedy wydarzyło.]'
@@ -385,7 +447,18 @@ const DANE = {
     if (kopertaNie >= 4) { giveUp('koperta'); return; }
     $('koperta-nie').textContent = kopertaEtykiety[kopertaNie];
   });
-  $('koperta-tak').addEventListener('click', () => showMemory(0));
+  function openEnvelope() {
+    const env = $('koperta-env');
+    if (env.classList.contains('open')) return;
+    env.classList.add('open');
+    env.setAttribute('aria-label', 'Koperta otwarta');
+    $('koperta-pytanie').hidden = true;
+    $('koperta-dalej').hidden = false;
+    $('koperta-dalej').focus({ preventScroll: true });
+  }
+  $('koperta-env').addEventListener('click', openEnvelope);
+  $('koperta-tak').addEventListener('click', openEnvelope);
+  $('koperta-dalej').addEventListener('click', () => showMemory(0));
 
   // 2–5. Wspomnienia
   let current = 0;
